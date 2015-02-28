@@ -12,5 +12,5 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^home/', 'estadisticas.views.home', name='home'),
-    url(r'^guardar-pregunta/$', 'discusion.views.guardar_pregunta', name='guardar_pregunta'),
+    url(r'^', 'estadisticas.views.home', name='home'),
 )
