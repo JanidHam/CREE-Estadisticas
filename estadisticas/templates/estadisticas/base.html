@@ -30,7 +30,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <a class="navbar-brand" href="/">Encuestas</a>
         </div>
       </div>
     </nav>
@@ -39,26 +39,22 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Encuestas <span class="sr-only">(current)</span></a></li>
-            <li><a href="/preguntas/">Preguntas</a></li>
-            <li><a href="#">Respuestas</a></li>
-            <li><a href="#">Contestar Encuesta</a></li>
-            <li><a href="#">Datos Estadísticos</a></li>
+            {% block menu %}
+            {% endblock menu %}
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           {% block contenido %}
-            <p>Que pajo</p>
           {% endblock %}
         </div>
       </div>
     </div>
-    {% block p %}
-    {% endblock %}
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+    <script src="{% static "estadisticas/js/estadisticas.js" %}"></script>
   </body>
 </html>
