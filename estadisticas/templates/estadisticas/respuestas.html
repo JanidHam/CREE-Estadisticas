@@ -1,0 +1,36 @@
+{% extends 'estadisticas/base.html' %}
+
+{% block menu %}
+
+<li><a href="/encuestas/">Encuestas</a></li>
+<li><a href="/preguntas/">Preguntas </a></li>
+<li class="active"><a href="/respuestas/">Respuestas</a></li>
+<li><a href="#">Contestar Encuesta</a></li>
+<li><a href="#">Datos Estadísticos</a></li>
+
+{% endblock menu %}
+
+{% block contenido %}
+
+<div id="preguntas">
+	<select>
+		{% for pregunta in  preguntas %}
+			<option value="{{pregunta.id}}"> {{pregunta.pregunta}} </option>
+		{% endfor %}
+	</select>
+</div>
+<div id="respuestas">
+	<div id="crear-respuesta">
+		{% csrf_token %}
+		<input type="hidden" id="id">
+		<input type="text" placeholder="Escribe tu respuesta">
+		<button class="btn btn-primary">Enviar Respuesta</button>
+	</div>
+	<ul>
+		{% for respuesta in opciones %}
+			<li><a data-id="{{ respuesta.id }}">{{respuesta.opcion}}</a></li>
+		{% endfor %}
+	</ul>
+</div>
+
+{% endblock contenido %}

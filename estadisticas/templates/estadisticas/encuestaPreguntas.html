@@ -1,0 +1,59 @@
+{% extends 'estadisticas/base.html' %}
+
+{% block menu %}
+
+<li class="active"><a href="/encuestas/">Encuestas</a></li>
+<li><a href="/preguntas/">Preguntas </a></li>
+<li><a href="/respuestas/">Respuestas</a></li>
+<li><a href="#">Contestar Encuesta</a></li>
+<li><a href="#">Datos Estadísticos</a></li>
+
+{% endblock menu %}
+
+{% block contenido %}
+
+<div class="panel panel-primary" id="encuestasPreguntas">
+	<div class="panel-heading">
+		<h2 class="panel-title">Encuesta - {{ encuestaH.nombre }} </h2>
+	</div>
+	<div class="panel-body" id="crear-encuestaPreguntas">
+		<div class="alert alert-info" role="alert">
+		<strong>Al dar clic en gaurdar se guardarán las preguntas que están marcadas con el check para el uso de las mismas al contestar la encuesta.</strong>
+		</div>
+		{% csrf_token %}
+		<input type="hidden" id="idEncuesta" value="{{ encuestaH.id }}">
+		<!-- <input type="text" placeholder="Escribe el nombre de la encuesta"> -->
+		<button class="btn btn-primary">Guarda Encuesta</button>
+	</div>
+</div>
+<div class="panel panel-primary" id="preguntas">
+	<div class="panel-heading">
+		<h3 class="panel-title">Preguntas de la encuesta</h3>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+		{% for p in preguntasE %}
+			<div class="col-lg-6">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" aria-label="..." name="type" value="{{p.id}}" checked>
+					</span>
+					<input type="text" class="form-control" aria-label="..." placeholder="{{p.pregunta}}"  disabled>
+				</div><!-- /input-group -->
+			</div><!-- /.col-lg-6 -->
+		{% endfor %}
+		{% for pregunta in preguntas %}
+			<div class="col-lg-6">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="checkbox" aria-label="..." value="{{pregunta.id}}" name="type">
+					</span>
+					<input type="text" class="form-control" aria-label="..." placeholder="{{pregunta.pregunta}}"  disabled>
+				</div><!-- /input-group -->
+			</div><!-- /.col-lg-6 -->
+		{% endfor %}
+		</div>
+	</div>
+</div>
+
+{% endblock contenido %}

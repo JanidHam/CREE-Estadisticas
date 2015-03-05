@@ -2,6 +2,7 @@ import json
 import pdb
 from django.shortcuts import render, render_to_response, RequestContext, redirect
 from django.http import HttpResponse, Http404
+from django.db.models import Count
 
 from .models import Pregunta, OpcionesPreguntas, Encuesta, EncuestaContestada
 # Create your views here.
@@ -42,10 +43,10 @@ def contestarEncuesta(request, id):
 	return render_to_response('estadisticas/contestarEncuesta.html', { 'preguntas': preguntas, 'data': data, 'encuestaH': encuesta }, context_instance=RequestContext(request))
 
 def estadisticasEncuesta(request, id):
-	contestacionEncuesta = EncuestaContestada.objects.filter(encueta_id=id)
+	contestacionEncuesta = EncuestaContestada.objects.filter(encuesta_id=id)
 	preguntas = Pregunta.objects.exclude(id__in=Encuesta.objects.get(id=id).preguntas.all())
 	preguntasEncueta = Encuesta.objects.get(id=id).preguntas.all()
-	return render_to_response('estadisticas/encuestaPreguntas.html', { 'preguntas': preguntas, 'preguntasE': preguntasEncueta, 'encuestaH': encuesta }, context_instance=RequestContext(request))
+	return render_to_response('estadisticas/datosEstasdisticos.html', { 'preguntas': preguntas, 'preguntasE': preguntasEncueta }, context_instance=RequestContext(request))
 
 def respuestas(request):
 	preguntas = Pregunta.objects.all().order_by('-id')
@@ -143,10 +144,28 @@ def guardarContestarEncuesta(request, id):
 		tasksRespuesta = request.POST.getlist('tasksRespuesta[]')
 		contador = 0
 		"""for t in tasks:
-			encuestaContestada = EncuestaContestada(respuesta=tasksRespuesta.index(contador), request.POST['fecha'])
+			encuestaContestada = EncuestaContestada(encuesta=encuesta.id, preguntaEncuesta=t, respuesta=tasksRespuesta.index(contador), request.POST['fecha'])
 			encuestaContestada.save()
 			++contador
 		redirect('encuestas')"""
+	else:
+		raise Http404
+
+def mostrarEstadisticas(request, id):
+	if request.is_ajax():
+		pdb.set_trace()
+		fechainicio = request.POST['fechaInicio']
+		fechafin = request.POST['fechafin']
+		contestacionEncuesta = EncuestaContestada.objects.filter(encuesta_id=id, fechaContestacion__gte=fechainicio, fechaContestacion__lte=fechafin)
+		contestacionEncuesta.values('preguntaEncuesta').annotate(Count('preguntaEncuesta'))
+
+		data = list()
+		data.append({ 'preguntas': contestacionEncuesta.count()})
+
+		return HttpResponse(
+			json.dumps({ 'total': data }),
+			content_type="application/json; charset=uft8"
+			)
 	else:
 		raise Http404
 

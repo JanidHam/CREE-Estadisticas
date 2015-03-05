@@ -1,0 +1,41 @@
+{% extends 'estadisticas/base.html' %}
+
+{% block menu %}
+
+<li><a href="/encuestas/">Encuestas</a></li>
+<li class="active"><a href="/preguntas/">Preguntas </a></li>
+<li><a href="/respuestas/">Respuestas</a></li>
+<li><a href="#">Contestar Encuesta</a></li>
+<li><a href="#">Datos Estadísticos</a></li>
+
+{% endblock menu %}
+
+{% block contenido %}
+
+<div class="panel panel-primary" id="preguntas">
+	<div class="panel-heading">
+		<h3 class="panel-title">Preguntas</h3>
+	</div>
+	<div class="panel-body">
+	<div class="alert alert-info" role="alert">
+      <strong>Se enlistan todas las preguntas disponibles para usar en cualquier encuesta creada.</strong>
+    </div>
+	<div class="panel-body" id="crear-pregunta">
+		{% csrf_token %}
+		<input type="hidden" id="id" >
+		<div class="input-group">
+		<input type="text" placeholder="Escribe tu pregunta" class="form-control">
+		<span class="input-group-btn">
+			<button class="btn btn-primary">Enviar Pregunta</button>
+		</span>
+		</div>
+	</div>
+	<ul>
+		{% for pregunta in preguntas %}
+			<li class="well well-sm"><a data-id="{{ pregunta.id }}">{{pregunta.pregunta}}</a></li>
+		{% endfor %}
+	</ul>
+	</div>
+</div>
+
+{% endblock contenido %}

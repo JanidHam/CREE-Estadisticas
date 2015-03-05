@@ -1,0 +1,40 @@
+{% extends 'estadisticas/base.html' %}
+
+{% block menu %}
+
+<li><a href="/encuestas/">Encuestas</a></li>
+<li><a href="/preguntas/">Preguntas </a></li>
+<li><a href="/respuestas/">Respuestas</a></li>
+<li><a href="#">Contestar Encuesta</a></li>
+<li class="active"><a href="#">Datos Estadísticos</a></li>
+
+{% endblock menu %}
+
+{% block contenido %}
+
+<div class="panel panel-primary" id="fechas">
+	<div class="panel-heading">
+		<h3 class="panel-title">Seleccione un rango de fecha.</h3>
+	</div>
+	<div class="panel-body" id="enviarFechas">
+		<div class="alert alert-info" role="alert">
+			<strong>A continuación aparecen los datos estadísticos del rango de fechas que seleccione.</strong>
+		</div>
+		{% csrf_token %}
+		<!-- <input type="hidden" id="idEncuesta" value="{{ encuestaH.id }}"> -->
+		<input type="date" id="fechaInicio">
+		<input type="date" id="fechaFin">
+		<!-- <input type="text" placeholder="Escribe el nombre de la encuesta"> -->
+		<button class="btn btn-primary">Mostrar Datos</button>
+	</div>
+</div>
+<div class="panel panel-primary" id="datos">
+	<div class="panel-heading">
+		<h3 class="panel-title">Se muestra la información del rango de fecha seleccionado.</h3>
+	</div>
+	<div class="panel-body" id="datosEstadisticos">
+		
+	</div>
+</div>
+
+{% endblock contenido %}

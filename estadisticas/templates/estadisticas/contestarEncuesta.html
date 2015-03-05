@@ -1,0 +1,45 @@
+{% extends 'estadisticas/base.html' %}
+
+{% block menu %}
+
+<li><a href="/encuestas/">Encuestas</a></li>
+<li><a href="/preguntas/">Preguntas </a></li>
+<li><a href="/respuestas/">Respuestas</a></li>
+<li class="active"><a href="#">Contestar Encuesta</a></li>
+<li><a href="#">Datos Estadísticos</a></li>
+
+{% endblock menu %}
+
+{% block contenido %}
+
+<div class="alert alert-info" role="alert">
+<strong>A continuación aparecen todas las pregunas con sus respectivas respuestas, marque las respuestas con un check y al finalizar de clic en el boton enviar encuesta para procesar los datos estadísticos posteriormente.</strong>
+</div>
+<div class="panel panel-primary" id="preguntas">
+	<div class="panel-heading">
+		<h3 class="panel-title">Preguntas de la encuesta</h3>
+	</div>
+	<div class="panel-body">
+		{% for pregunta in preguntas %}
+			<div class="alert alert-info" role="alert">
+				<strong>{{pregunta.pregunta}}</strong>
+			</div>
+			<div class="row">
+			{% for opcion in data %}
+				{% if opcion.idPregunta == pregunta.id %}
+					<div class="col-lg-6">
+						<div class="input-group">
+							<span class="input-group-addon">
+								<input type="radio" aria-label="..." value="{{opcion.opcion}}" name="{{pregunta.id}}">
+							</span>
+							<input type="text" class="form-control" aria-label="..." placeholder="{{opcion.opcion}}"  disabled>
+						</div><!-- /input-group -->
+					</div><!-- /.col-lg-6 -->
+				{% endif %}
+			{% endfor %}
+			</div>
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock contenido %}
