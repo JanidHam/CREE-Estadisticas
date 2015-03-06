@@ -139,31 +139,39 @@ def guardarPreguntasEncuesta(request, id):
 
 def guardarContestarEncuesta(request, id):
 	if request.is_ajax():
+		#pdb.set_trace()
 		encuesta = Encuesta.objects.get(id=id)
-		tasksId = request.POST.getlist('tasksId[]')
-		tasksRespuesta = request.POST.getlist('tasksRespuesta[]')
+		tasksId = request.POST.getlist('tasksP[]')
+		tasksRespuesta = request.POST.getlist('tasks[]')
 		contador = 0
-		"""for t in tasks:
-			encuestaContestada = EncuestaContestada(encuesta=encuesta.id, preguntaEncuesta=t, respuesta=tasksRespuesta.index(contador), request.POST['fecha'])
+		for t in tasksId:
+			pregunta = Pregunta.objects.get(id=t)
+			encuestaContestada = EncuestaContestada(encuesta=encuesta, pregunta=pregunta, respuesta=tasksRespuesta[contador], fechaContestacion=request.POST['fecha'])
 			encuestaContestada.save()
 			++contador
-		redirect('encuestas')"""
+		redirect('encuestas')
+		return HttpResponse(
+			'succes'
+			)
 	else:
 		raise Http404
 
 def mostrarEstadisticas(request, id):
 	if request.is_ajax():
-		pdb.set_trace()
-		fechainicio = request.POST['fechaInicio']
-		fechafin = request.POST['fechafin']
+		#pdb.set_trace()
+		fechainicio = request.POST['fechaI']
+		fechafin = request.POST['fechaF']
 		contestacionEncuesta = EncuestaContestada.objects.filter(encuesta_id=id, fechaContestacion__gte=fechainicio, fechaContestacion__lte=fechafin)
-		contestacionEncuesta.values('preguntaEncuesta').annotate(Count('preguntaEncuesta'))
-
-		data = list()
-		data.append({ 'preguntas': contestacionEncuesta.count()})
+		#contestacionEncuesta.values('pregunta').annotate(Count('pregunta'))
+		dataPreguntasEncuensta = list()
+		#dataPreguntasEncuensta = contestacionEncuesta.values('pregunta').annotate(totalPregunta=Count('pregunta'))
+		dataDT = contestacionEncuesta.values('pregunta', 'respuesta').annotate(totalR=Count('respuesta'))
+		for p in dataDT:
+		 	dataPreguntasEncuensta.append(p)
+		#pdb.set_trace()
 
 		return HttpResponse(
-			json.dumps({ 'total': data }),
+			json.dumps({ 'dataTotal': dataPreguntasEncuensta }),
 			content_type="application/json; charset=uft8"
 			)
 	else:

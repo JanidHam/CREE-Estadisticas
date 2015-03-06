@@ -19,7 +19,12 @@
 	<div class="panel-heading">
 		<h3 class="panel-title">Preguntas de la encuesta</h3>
 	</div>
-	<div class="panel-body">
+	<div class="panel-body" id="enviarRespuestas">
+		{% csrf_token %}
+		<input type="hidden" id="idEncuesta" value="{{ encuestaH.id }}">
+		<!-- <input type="text" placeholder="Escribe el nombre de la encuesta"> -->
+		<input type="date" id="fecha">
+		<button class="btn btn-primary">Guarda Encuesta</button>
 		{% for pregunta in preguntas %}
 			<div class="alert alert-info" role="alert">
 				<strong>{{pregunta.pregunta}}</strong>

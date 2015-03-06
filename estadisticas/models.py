@@ -27,3 +27,6 @@ class EncuestaContestada(models.Model):
 	pregunta = models.ForeignKey(Pregunta, related_name='preguntaEncuesta')
 	respuesta = models.CharField(max_length=255)
 	fechaContestacion = models.DateField()
+
+	def __unicode__(self):
+		return self.respuesta

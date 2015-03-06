@@ -20,7 +20,33 @@ function main_discusiones() {
 	$('#preguntas select').on('change', enviarPreguntaToOpciones);
 
 	$('#enviarFechas button').on('click', enviarFechaParaDatos);
+
+	$('#enviarRespuestas button').on('click', enviarRepuestasEncuesta);
 	//$('#preguntas').on('click', 'a', cargar_respuestas);
+}
+
+google.load('visualization', '1.1', {'packages':['bar']});
+var tasksPreguntas = [];
+function enviarRepuestasEncuesta() {
+	var tasks = respuestaPorPregunta();
+	var idinput    = $('#fecha');
+
+	if(idinput.val() != ''){
+		$.post('guardar-encuesta-contestada/', { 'fecha': idinput.val(), 'tasks[]': tasks, 'tasksP[]': tasksPreguntas }, actualizar_encuestas);
+	} else {
+		alert("esta vacio");
+	}
+}
+
+function respuestaPorPregunta() {
+    var tasks = [];
+    tasksPreguntas = [];
+    $('input:radio:checked').each(function() {
+        tasks.push($(this).val());
+        tasksPreguntas.push($(this).attr('name'));
+    });
+
+    return tasks;
 }
 
 function enviarFechaParaDatos() {
@@ -56,8 +82,9 @@ function enviar_encuestaPreguntas() {
 	var idinput    = $('#idEncuesta');
 	if(idinput.val() != ''){
     $.post('guardar-preguntasEncuesta/', { 'id': idinput.val(), 'tasks[]': tasks }, actualizar_encuestas);
-    } else 
-    alert("esta vacio")
+    } else {
+    	alert("esta vacio");
+	}
 	//if(input.val() != ''){
 	//	$.post('guardar-encuesta/', { nombre: input.val(), id: idinput.val() }, actualizar_encuestas);
 	//}
@@ -93,7 +120,76 @@ function actualizar_preguntas (data) {
 }
 
 function mostrarDatosEstadisticos (data) {
-	
+	var totalP = $('#totalP');
+	var div = $('#datosEstadisticos');
+	div.html('');
+	var idTemp = 0;
+	$.each(data.dataTotal, function(i, elemento){
+		if (idTemp != elemento.pregunta) {
+			idTemp = elemento.pregunta;
+			$('<div class="alert alert-info" role="alert"><strong>' + elemento.pregunta + '</strong></div>').appendTo(div);
+		}
+		$('<div class="row"><div class="col-lg-6"><input class="form-control" type="text" disabled placeholder="Respuesta: ' + elemento.respuesta + ' Total: ' +  elemento.totalR + '"disabled></div></div>').appendTo(div);
+	});
+	drawChart(data);
+}
+
+function drawChart(dataE) {
+		//var array = ([['Year', 'Sales', 'Expenses', 'Profit'],['2014', 1000, 400, 200],['2015', 1170, 460, 250]]);
+		//alert(array[1]+"");
+		//array.push(['2017', 1170, 460, 250]);
+		var preguntaId = 0;
+		var index = 0;
+		var array2 = [];
+		var arrayPR = [];
+		var arrayRespuestas = ['Preguntas'];
+		$.each(dataE.dataTotal, function(i, elemento){
+			if( !arrayRespuestas.contains(elemento.respuesta)) {
+				arrayRespuestas.push(elemento.respuesta);
+			}
+		});
+		array2.push(arrayRespuestas);
+		$.each(dataE.dataTotal, function(i, elemento){
+			if (preguntaId != elemento.pregunta) {
+				if (index > 0) {
+					array2.push(arrayPR);
+				}
+				index = 1;
+				arrayPR = [];
+				arrayPR.push('preguntas :' + elemento.pregunta);
+				preguntaId = elemento.pregunta;
+			}
+			for (var i = 1; i < arrayRespuestas.length; i++) {
+				if (arrayRespuestas[i] == elemento.respuesta) {
+					arrayPR[i] = elemento.totalR
+				} else if (arrayPR[i] == null){
+					arrayPR[i] = 0;
+				}
+			}
+		});
+		array2.push(arrayPR);
+
+		var data = google.visualization.arrayToDataTable(array2);
+
+        var options = {
+          chart: {
+            title: 'Gráfica de la encuesta',
+            //subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+          }
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+
+        chart.draw(data, options);
+      }
+
+Array.prototype.contains = function(element) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] == element) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function actualizar_encuestas (data) {
